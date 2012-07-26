@@ -1,0 +1,10 @@
+{% extends "dashboard/base.html" %}
+
+{% block body %}
+  {% for graph in graphs %}
+    <div>
+      <h2>{{graph.name}}</h2>
+      <p>{{graph.count}}</p>
+    </div>
+  {% endfor %}
+{% endblock %}
