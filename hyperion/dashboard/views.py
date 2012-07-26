@@ -3,13 +3,22 @@ from models import Graph
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from pyes.es import ES
-from pyes.query import TermQuery
+from pyes.query import TermQuery, BoolQuery, RangeQuery
+from pyes.utils import ESRange
 
 def parse(query):
-    q = TermQuery()
-    for term in query.split(' '):
-        key, value = term.split('=')
-        q.add(key, value)
+    clauses = query.split(' ')
+    tq = TermQuery()
+    earliest = None
+    for clause in clauses:
+        key, value = clause.split('=')
+        if key == 'earliest':
+            earliest = value
+            continue
+        tq.add(key, value)
+    q = BoolQuery(must=[tq])
+    if earliest:
+        q.add_must(RangeQuery(ESRange('created_at', from_value='now' + earliest)))
     return q
 
 def index(request):
