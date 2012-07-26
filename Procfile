@@ -1,1 +1,1 @@
-web: ./manage.py python ./manage.py run_gunicorn -b "0.0.0.0:$PORT" -w 10
+web: ./manage.py run_gunicorn -b "0.0.0.0:$PORT" -w 10
