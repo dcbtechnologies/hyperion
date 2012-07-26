@@ -8,17 +8,13 @@ from pyes.utils import ESRange
 
 def parse(query):
     clauses = query.split(' ')
-    tq = TermQuery()
-    earliest = None
+    q = BoolQuery()
     for clause in clauses:
         key, value = clause.split('=')
         if key == 'earliest':
-            earliest = value
-            continue
-        tq.add(key, value)
-    q = BoolQuery(must=[tq])
-    if earliest:
-        q.add_must(RangeQuery(ESRange('created_at', from_value='now' + earliest)))
+            q.add_must(RangeQuery(ESRange('created_at', from_value='now' + value)))
+        else:
+            q.add_must(TermQuery(key, value))
     return q
 
 def index(request):
